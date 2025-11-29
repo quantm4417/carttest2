@@ -5,8 +5,28 @@ from app.config import Config
 
 def get_db():
     """Get database connection"""
-    conn = sqlite3.connect(Config.DATABASE_PATH)
+    # Ensure database directory exists and has proper permissions
+    db_path = Config.DATABASE_PATH
+    db_dir = os.path.dirname(db_path)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
+        # Set directory permissions (read/write/execute for owner)
+        try:
+            os.chmod(db_dir, 0o755)
+        except:
+            pass  # Ignore if chmod fails
+    
+    # Connect to database
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    
+    # Ensure database file has write permissions
+    try:
+        if os.path.exists(db_path):
+            os.chmod(db_path, 0o644)
+    except:
+        pass  # Ignore if chmod fails
+    
     return conn
 
 def create_tables():

@@ -21,36 +21,42 @@ A premium personal product gallery application for managing and ordering vape li
 
 ## Quick Start
 
-### Native Linux Setup (Recommended)
+### Installation (One-Time Setup)
 
-1. **Run setup script:**
-   ```bash
-   chmod +x setup_linux.sh
-   ./setup_linux.sh
-   ```
-   This will install all dependencies, create virtual environment, and initialize the database.
+After cloning the repository, run:
 
-2. **Configure environment:**
-   ```bash
-   # Edit .env and set SECRET_KEY
-   nano .env
-   # Generate secret key: openssl rand -hex 32
-   ```
+```bash
+chmod +x install_setup.sh
+./install_setup.sh
+```
 
-3. **Start the application:**
-   ```bash
-   ./start.sh
-   # OR manually:
-   source venv/bin/activate
-   python3 run.py
-   ```
+This will:
+- Install all system dependencies
+- Create Python virtual environment
+- Install Python packages
+- Install Playwright browsers
+- Create `.env` file with auto-generated SECRET_KEY
+- Initialize database
+- Set up all directories
 
-4. **Access the application:**
-   - Open http://localhost:5000 in your browser
+### Start the Application
 
-5. **Configure users:**
+```bash
+./start.sh
+```
+
+The application will be available at: **http://localhost:5000**
+
+### First Steps
+
+1. **Configure users:**
    - Navigate to User Setup (via gallery or directly)
    - Configure dampfi.ch credentials for users 1-5
+
+2. **Add products:**
+   - Go to Product Management
+   - Add product URLs from dampfi.ch
+   - Upload images and scrape metadata
 
 ### Using Docker (Alternative)
 

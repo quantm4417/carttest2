@@ -1,37 +1,40 @@
 # Quick Start Guide
 
-## Prerequisites
-- Python 3.11+ OR Docker & Docker Compose
-- Internet connection (for scraping dampfi.ch)
-
-## Option 1: Docker (Recommended)
+## Installation (One Command)
 
 ```bash
-# 1. Initialize database
-python scripts/init_db.py
-
-# 2. Start application
-docker-compose up -d
-
-# 3. Open browser
-# http://localhost:5000
+chmod +x install_setup.sh
+./install_setup.sh
 ```
 
-## Option 2: Direct Python
+## Start Application
 
 ```bash
-# 1. Install dependencies
-pip install -r requirements.txt
-playwright install chromium
-
-# 2. Initialize database
-python scripts/init_db.py
-
-# 3. Run application
-python run.py
-# or
-python -m flask run
+./start.sh
 ```
+
+Open http://localhost:5000 in your browser.
+
+## First Steps After Starting
+
+1. **Configure Users (1-5)**
+   - Navigate to User Setup (or it will prompt you during checkout)
+   - Enter dampfi.ch email and password for each user you want to use
+
+2. **Add Products**
+   - Go to "Product Management"
+   - Click "Add New Product"
+   - Enter product URL from dampfi.ch
+   - Enter product name
+   - Upload product image (drag & drop)
+   - Click "Save Product"
+   - Click "Scrape Metadata" to fetch current price and options
+
+3. **Use Gallery**
+   - Go to "Gallery"
+   - Select products with quantities and options
+   - Click "Review Selection"
+   - Click "Proceed to Checkout"
 
 ## First Steps After Starting
 

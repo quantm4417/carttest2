@@ -27,7 +27,11 @@ def checkout_review():
         return redirect(url_for('views.gallery'))
     
     user = get_user_by_id(user_id)
-    if not user or not user.get('dampfi_email'):
+    if not user:
+        flash('User not found', 'error')
+        return redirect(url_for('views.gallery'))
+    
+    if not user.get('dampfi_email'):
         flash('User credentials not set up. Please configure user credentials first.', 'error')
         return redirect(url_for('views.user_setup', user_id=user_id))
     

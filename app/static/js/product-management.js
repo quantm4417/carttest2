@@ -145,7 +145,17 @@ async function saveProduct() {
             });
         }
         
-        const data = await response.json();
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        let data;
+        
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            // Response is HTML (error page)
+            const text = await response.text();
+            throw new Error(`Server error (${response.status}): ${response.statusText}. Check server logs for details.`);
+        }
         
         if (response.ok) {
             const savedProductId = productId || data.product.id;
