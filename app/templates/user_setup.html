@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}User Setup - Dampfi{% endblock %}
+
+{% block content %}
+<div class="setup-container">
+    <div class="setup-header">
+        <h2>Configure User Credentials</h2>
+        <p>User ID: {{ user_id }}</p>
+        {% if user %}
+        <p class="user-info">Username: {{ user.username }}</p>
+        {% endif %}
+    </div>
+
+    <div class="setup-form-container">
+        <form id="credentials-form">
+            <input type="hidden" id="user-id" value="{{ user_id }}">
+            
+            <div class="form-group">
+                <label for="dampfi-email">dampfi.ch Email *</label>
+                <input type="email" id="dampfi-email" name="dampfi_email" required
+                       value="{{ user.dampfi_email if user and user.dampfi_email else '' }}"
+                       placeholder="your@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="dampfi-password">dampfi.ch Password *</label>
+                <input type="password" id="dampfi-password" name="dampfi_password" required
+                       placeholder="Enter your password">
+                <small class="form-help">This will be stored securely in the database</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Credentials</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('credentials-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const userId = document.getElementById('user-id').value;
+    const email = document.getElementById('dampfi-email').value;
+    const password = document.getElementById('dampfi-password').value;
+    
+    try {
+        const response = await fetch(`/api/user/${userId}/credentials`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({dampfi_email: email, dampfi_password: password})
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('Credentials saved successfully!');
+            window.history.back();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to save credentials'));
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+});
+</script>
+{% endblock %}
+
+
+

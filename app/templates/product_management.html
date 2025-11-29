@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Product Management - Dampfi{% endblock %}
+
+{% block content %}
+<div class="management-container">
+    <div class="management-header">
+        <h2>Product Management</h2>
+        <button class="btn btn-primary" id="add-product-btn">Add New Product</button>
+    </div>
+
+    <div class="products-list">
+        {% if products %}
+            {% for product in products %}
+            <div class="product-item" data-product-id="{{ product.id }}">
+                <div class="product-item-image">
+                    {% if product.image_path %}
+                    <img src="{{ url_for('views.uploaded_file', filename=product.image_path.split('/')[-1]) }}" 
+                         alt="{{ product.name }}"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="image-placeholder" style="display: none;">No Image</div>
+                    {% else %}
+                    <div class="image-placeholder">No Image</div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-item-details">
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-url">{{ product.product_url }}</p>
+                    <div class="product-meta">
+                        <span class="meta-item">Price: 
+                            {% if product.price %}CHF {{ "%.2f"|format(product.price) }}{% else %}Unknown{% endif %}
+                        </span>
+                        <span class="meta-item">Stock: {{ product.stock_status }}</span>
+                    </div>
+                </div>
+                
+                <div class="product-item-actions">
+                    <button class="btn btn-small btn-secondary scrape-btn" data-product-id="{{ product.id }}">
+                        Scrape Metadata
+                    </button>
+                    <button class="btn btn-small btn-primary edit-btn" data-product-id="{{ product.id }}">
+                        Edit Product
+                    </button>
+                    <button class="btn btn-small btn-danger delete-btn" data-product-id="{{ product.id }}">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>No products yet. Click "Add New Product" to get started.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div id="product-modal" class="modal" style="display: none;">
+    <div class="modal-content large">
+        <span class="close-modal">&times;</span>
+        <h2 id="modal-title">Add Product</h2>
+        <form id="product-form">
+            <input type="hidden" id="product-id" name="product_id">
+            
+            <div class="form-group">
+                <label for="product-url">Product URL *</label>
+                <input type="url" id="product-url" name="product_url" required 
+                       placeholder="https://www.dampfi.ch/...">
+                <small class="form-help">Enter the full URL from dampfi.ch</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-name">Product Name *</label>
+                <input type="text" id="product-name" name="product_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-image">Product Image</label>
+                <div class="image-upload-area" id="image-upload-area">
+                    <input type="file" id="product-image" name="image" accept="image/webp,image/jpeg,image/jpg" 
+                           style="display: none;">
+                    <div class="upload-placeholder">
+                        <p>Drag & drop image here or click to browse</p>
+                        <p class="upload-hint">WebP or JPEG, max 10MB</p>
+                    </div>
+                    <img id="image-preview" style="display: none; max-width: 300px; margin-top: 10px;">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Product</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/product-management.js') }}"></script>
+{% endblock %}
+

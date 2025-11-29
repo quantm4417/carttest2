@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Gallery - Dampfi{% endblock %}
+
+{% block content %}
+<div class="gallery-container">
+    <div class="gallery-header">
+        <h2>My Favorite Vape Liquids</h2>
+        <div class="selection-controls">
+            <div class="user-selector">
+                <label for="user-id">User:</label>
+                <input type="number" id="user-id" min="1" max="5" value="1" class="user-input">
+            </div>
+            <button id="review-selection" class="btn btn-primary" disabled>
+                Review Selection (<span id="selection-count">0</span>)
+            </button>
+        </div>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid">
+        {% if products %}
+            {% for product in products %}
+            <div class="product-card" data-product-id="{{ product.id }}" 
+                 data-product-url="{{ product.product_url }}"
+                 {% if product.stock_status == 'out_of_stock' %}data-out-of-stock="true"{% endif %}>
+                
+                {% if product.stock_status != 'out_of_stock' %}
+                <div class="availability-badge">✓</div>
+                {% endif %}
+                
+                <div class="product-image-container">
+                    {% if product.image_path %}
+                    <img src="{{ url_for('views.uploaded_file', filename=product.image_path.split('/')[-1]) }}" 
+                         alt="{{ product.name }}" 
+                         class="product-image"
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 400%27%3E%3Crect fill=%27%23ddd%27 width=%27400%27 height=%27400%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 text-anchor=%27middle%27 dy=%27.3em%27 fill=%27%23999%27%3ENo Image%3C/text%3E%3C/svg%3E'">
+                    {% else %}
+                    <div class="product-image-placeholder">No Image</div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-price">
+                        {% if product.price %}
+                            CHF {{ "%.2f"|format(product.price) }}
+                        {% else %}
+                            Price unknown
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-options">
+                        <label for="option-{{ product.id }}">Option:</label>
+                        <select id="option-{{ product.id }}" class="option-select" data-product-id="{{ product.id }}">
+                            <option value="">Select option...</option>
+                            {% if product.options %}
+                                {% for option in product.options %}
+                                <option value="{{ option.value }}" 
+                                        {% if not option.in_stock %}disabled{% endif %}
+                                        data-in-stock="{{ 'true' if option.in_stock else 'false' }}">
+                                    {{ option.label }}{% if not option.in_stock %} (Out of Stock){% endif %}
+                                </option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                    
+                    <div class="product-quantity">
+                        <label for="qty-{{ product.id }}">Quantity:</label>
+                        <input type="number" id="qty-{{ product.id }}" 
+                               class="quantity-input" 
+                               min="1" max="5" 
+                               value="1"
+                               data-product-id="{{ product.id }}">
+                    </div>
+                    
+                    <button class="btn btn-small add-to-selection" data-product-id="{{ product.id }}">
+                        Add to Selection
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>No products yet. Add products in Product Management.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="selection-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Selected Items</h2>
+        <div id="selection-list"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" id="clear-selection">Clear All</button>
+            <button class="btn btn-primary" id="proceed-checkout">Proceed to Checkout</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/gallery.js') }}"></script>
+{% endblock %}
+

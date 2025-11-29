@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout Review - Dampfi{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h2>Review Your Selection</h2>
+        <p class="user-info">User: {{ user.username }} (ID: {{ user.id }})</p>
+    </div>
+
+    <div class="checkout-content">
+        <div class="selection-summary">
+            <h3>Selected Items</h3>
+            <div id="items-summary"></div>
+            <div class="total-section">
+                <strong>Total: <span id="total-price">CHF 0.00</span></strong>
+            </div>
+        </div>
+
+        <div class="order-history">
+            <h3>Recent Orders</h3>
+            {% if recent_orders %}
+                <div class="orders-list">
+                    {% for order in recent_orders %}
+                    <div class="order-item">
+                        <div class="order-header">
+                            <span class="order-date">{{ order.timestamp }}</span>
+                            <span class="order-status order-{{ order.status }}">{{ order.status }}</span>
+                        </div>
+                        <div class="order-details">
+                            <span class="order-total">CHF {{ "%.2f"|format(order.total_price or 0) }}</span>
+                            <span class="order-items-count">{{ order.items|length }} item(s)</span>
+                        </div>
+                        {% if order.confirmation_data and order.confirmation_data.order_number %}
+                        <div class="order-confirmation">
+                            Order #: {{ order.confirmation_data.order_number }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-orders">No previous orders</p>
+            {% endif %}
+        </div>
+
+        <div class="checkout-actions">
+            <button class="btn btn-secondary" onclick="window.history.back()">Back to Gallery</button>
+            <button class="btn btn-primary btn-large" id="confirm-checkout-btn">
+                Confirm & Place Order
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="checkout-progress-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>Processing Order...</h2>
+        <div class="progress-indicator">
+            <div class="spinner"></div>
+            <p id="progress-message">Adding items to cart...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+{% endblock %}
+
+
+
